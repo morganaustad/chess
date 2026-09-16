@@ -58,6 +58,21 @@ public class ChessBoard {
     }
 
 
+    public boolean isEnemyPresent(ChessPosition target, ChessGame.TeamColor teamColor) {
+        if (!target.isInBounds()) {
+            return false;
+        }
+        ChessPiece targetOccupant = this.getPiece(target);
+        if (targetOccupant == null) {
+            return false;
+        } else if (targetOccupant.getTeamColor() != teamColor) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
