@@ -38,11 +38,11 @@ public class ChessPosition {
         return new ChessPosition(this.row + row, this.col + col);
     }
 
-    public boolean isInBounds() {
-        return this.row <= 8
-                && this.col <= 8
-                && this.row >= 1
-                && this.col >= 1;
+    public boolean isOutOfBounds() {
+        return this.row > 8
+                || this.col > 8
+                || this.row < 1
+                || this.col < 1;
     }
 
     @Override

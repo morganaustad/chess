@@ -72,7 +72,7 @@ public class ChessBoard {
 
 
     public boolean isValidMove(ChessPosition target, ChessGame.TeamColor teamColor) {
-        if (!target.isInBounds()) {
+        if (target.isOutOfBounds()) {
             return false;
         }
         ChessPiece targetOccupant = this.getPiece(target);
@@ -83,7 +83,7 @@ public class ChessBoard {
 
 
     public boolean isEmpty(ChessPosition target) {
-        if (!target.isInBounds()) {
+        if (target.isOutOfBounds()) {
             return false;
         }
 
@@ -92,7 +92,7 @@ public class ChessBoard {
 
 
     public boolean isEnemyPresent(ChessPosition target, ChessGame.TeamColor teamColor) {
-        if (!target.isInBounds()) {
+        if (target.isOutOfBounds()) {
             return false;
         }
         ChessPiece targetOccupant = this.getPiece(target);
