@@ -14,7 +14,7 @@ public class ChessBoard {
     ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
-        
+
     }
 
     /**
@@ -43,7 +43,31 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        for (ChessPiece[] square : squares) {
+            if (square[0] != null) {
+                square[0] = null;
+            }
+        }
+
+        // Add pawns
+        for (int i = 1; i <= 8; i++) {
+            this.addPiece(new ChessPosition(2, i), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
+            this.addPiece(new ChessPosition(7, i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
+        }
+
+        // Add back row
+        ChessGame.TeamColor[] colors = {ChessGame.TeamColor.WHITE, ChessGame.TeamColor.BLACK};
+        for (ChessGame.TeamColor color : colors) {
+            int row = (color == ChessGame.TeamColor.WHITE) ? 1 : 8;
+            this.addPiece(new ChessPosition(row, 1), new ChessPiece(color, ChessPiece.PieceType.ROOK));
+            this.addPiece(new ChessPosition(row, 2), new ChessPiece(color, ChessPiece.PieceType.KNIGHT));
+            this.addPiece(new ChessPosition(row, 3), new ChessPiece(color, ChessPiece.PieceType.BISHOP));
+            this.addPiece(new ChessPosition(row, 4), new ChessPiece(color, ChessPiece.PieceType.QUEEN));
+            this.addPiece(new ChessPosition(row, 5), new ChessPiece(color, ChessPiece.PieceType.KING));
+            this.addPiece(new ChessPosition(row, 6), new ChessPiece(color, ChessPiece.PieceType.BISHOP));
+            this.addPiece(new ChessPosition(row, 7), new ChessPiece(color, ChessPiece.PieceType.KNIGHT));
+            this.addPiece(new ChessPosition(row, 8), new ChessPiece(color, ChessPiece.PieceType.ROOK));
+        }
     }
 
 
@@ -81,6 +105,20 @@ public class ChessBoard {
         }
     }
 
+
+    @Override
+    public String toString() {
+        StringBuilder value = new StringBuilder();
+        for (ChessPiece[] pieceList : squares) {
+            for (ChessPiece piece : pieceList) {
+                if (piece != null) {
+                    value.append(piece.toString());
+                    value.append(", ");
+                }
+            }
+        }
+        return new String(value);
+    }
 
     @Override
     public boolean equals(Object o) {
