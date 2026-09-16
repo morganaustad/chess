@@ -98,11 +98,7 @@ public class ChessBoard {
         ChessPiece targetOccupant = this.getPiece(target);
         if (targetOccupant == null) {
             return false;
-        } else if (targetOccupant.getTeamColor() != teamColor) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return targetOccupant.getTeamColor() != teamColor;
     }
 
 
@@ -112,7 +108,7 @@ public class ChessBoard {
         for (ChessPiece[] pieceList : squares) {
             for (ChessPiece piece : pieceList) {
                 if (piece != null) {
-                    value.append(piece.toString());
+                    value.append(piece);
                     value.append(", ");
                 }
             }
