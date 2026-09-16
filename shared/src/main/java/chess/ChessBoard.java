@@ -58,6 +58,15 @@ public class ChessBoard {
     }
 
 
+    public boolean isEmpty(ChessPosition target) {
+        if (!target.isInBounds()) {
+            return false;
+        }
+
+        return this.getPiece(target) == null;
+    }
+
+
     public boolean isEnemyPresent(ChessPosition target, ChessGame.TeamColor teamColor) {
         if (!target.isInBounds()) {
             return false;
