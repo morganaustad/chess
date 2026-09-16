@@ -46,6 +46,18 @@ public class ChessBoard {
         throw new RuntimeException("Not implemented");
     }
 
+
+    public boolean isValidMove(ChessPosition target, ChessGame.TeamColor teamColor) {
+        if (!target.isInBounds()) {
+            return false;
+        }
+        ChessPiece targetOccupant = this.getPiece(target);
+        if (targetOccupant == null) {
+            return true;
+        } else return !targetOccupant.getTeamColor().equals(teamColor);
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
