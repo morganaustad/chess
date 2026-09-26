@@ -45,10 +45,16 @@ public class ChessMove {
         return promotionPiece;
     }
 
+
     @Override
     public String toString() {
-        return String.format("%s%s", startPosition, endPosition);
+        return "ChessMove{" +
+                "startPosition=" + startPosition +
+                ", endPosition=" + endPosition +
+                ", promotionPiece=" + promotionPiece +
+                '}';
     }
+
 
     @Override
     public boolean equals(Object o) {

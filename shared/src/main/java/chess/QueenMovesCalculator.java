@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class QueenMovesCalculator implements PieceMovesCalculator {
-
+public class QueenMovesCalculator implements MovesCalculator {
     private final ChessBoard board;
     private final ChessPosition position;
     private final ChessPiece piece;
@@ -17,25 +16,27 @@ public class QueenMovesCalculator implements PieceMovesCalculator {
     }
 
     @Override
-    public Collection<ChessMove> pieceMoves() {
+    public Collection<ChessMove> getPossibleMoves() {
         List<ChessMove> moves = new ArrayList<>();
-        int[][] offsets = { {1, 1}, {1, -1}, {-1, -1}, {-1, 1}, {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+        int[][] offsets = { {1, 1}, {1, -1}, {-1, -1}, {-1, 1}, {0, 1}, {0, -1}, {-1, 0}, {1, 0} };
 
         for (int[] offset : offsets) {
-            ChessPosition target = position.addOffSet(offset[0], offset[1]);
-            boolean captured = false;
-            while (board.isValidMove(target, piece.getTeamColor()) && !captured) {
-                moves.add(new ChessMove(position, target, null));
+            ChessPosition target = position.addOffset(offset[0], offset[1]);
+            boolean canMove = true;
 
-                if (board.getPiece(target) != null) {
-                    if (board.getPiece(target).getTeamColor() != this.piece.getTeamColor()) {
-                        captured = true;
-                    }
+            while (canMove) {
+                if (board.isEmpty(target)) {
+                    moves.add(new ChessMove(position, target, null));
+                    target = target.addOffset(offset[0], offset[1]);
+                } else if (board.isEnemyPresent(piece.getTeamColor(), target)) {
+                    moves.add(new ChessMove(position, target, null));
+                    canMove = false;
+                } else {
+                    canMove = false;
                 }
-
-                target = target.addOffSet(offset[0], offset[1]);
             }
         }
+
         return moves;
     }
 }

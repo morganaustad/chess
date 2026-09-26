@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class KingMovesCalculator implements PieceMovesCalculator {
-
+public class KingMovesCalculator implements MovesCalculator {
     private final ChessBoard board;
     private final ChessPosition position;
     private final ChessPiece piece;
@@ -17,16 +16,18 @@ public class KingMovesCalculator implements PieceMovesCalculator {
     }
 
     @Override
-    public Collection<ChessMove> pieceMoves() {
+    public Collection<ChessMove> getPossibleMoves() {
         List<ChessMove> moves = new ArrayList<>();
-        int[][] offsets = { {1, 1}, {1, -1}, {-1, 1}, {-1, -1}, {1, 0}, {-1, 0}, {0, -1}, {0, 1} };
+        int[][] offsets = { {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1} };
 
         for (int[] offset : offsets) {
-            ChessPosition target = position.addOffSet(offset[0], offset[1]);
-            if (board.isValidMove(target, piece.getTeamColor())) {
+            ChessPosition target = position.addOffset(offset[0], offset[1]);
+
+            if (board.isEmpty(target) || board.isEnemyPresent(piece.getTeamColor(), target)) {
                 moves.add(new ChessMove(position, target, null));
             }
         }
+
         return moves;
     }
 }
