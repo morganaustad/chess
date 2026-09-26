@@ -69,16 +69,16 @@ public class ChessBoard {
     }
 
 
-    private boolean isOnBoard(ChessPosition position) {
-        return (position.getRow() >= 1
-                && position.getRow() <= 8
-                && position.getColumn() >= 1
-                && position.getColumn() <= 8);
+    private boolean isOffBoard(ChessPosition position) {
+        return (position.getRow() < 1
+                || position.getRow() > 8
+                || position.getColumn() < 1
+                || position.getColumn() > 8);
     }
 
 
     public boolean isEmpty(ChessPosition position) {
-        if (!isOnBoard(position)) {
+        if (isOffBoard(position)) {
             return false;
         }
 
@@ -87,7 +87,7 @@ public class ChessBoard {
 
 
     public boolean isEnemyPresent(ChessGame.TeamColor team, ChessPosition position) {
-        if (!isOnBoard(position)) {
+        if (isOffBoard(position)) {
             return false;
         }
 
