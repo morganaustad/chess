@@ -57,22 +57,22 @@ public class ChessPiece {
         ChessPiece piece = board.getPiece(myPosition);
 
         if (piece.getPieceType() == PieceType.BISHOP) {
-            BishopMovesCalculator calc = new BishopMovesCalculator(board, myPosition);
+            MovesCalculator calc = new BishopMovesCalculator(board, myPosition);
             return calc.getPossibleMoves();
         } else if (piece.getPieceType() == PieceType.KING) {
-            KingMovesCalculator calc = new KingMovesCalculator(board, myPosition);
+            MovesCalculator calc = new KingMovesCalculator(board, myPosition);
             return calc.getPossibleMoves();
         } else if (piece.getPieceType() == PieceType.KNIGHT) {
-            KnightMovesCalculator calc = new KnightMovesCalculator(board, myPosition);
+            MovesCalculator calc = new KnightMovesCalculator(board, myPosition);
             return calc.getPossibleMoves();
         } else if (piece.getPieceType() == PieceType.PAWN) {
-            PawnMovesCalculator calc = new PawnMovesCalculator(board, myPosition);
+            MovesCalculator calc = new PawnMovesCalculator(board, myPosition);
             return calc.getPossibleMoves();
         } else if (piece.getPieceType() == PieceType.QUEEN) {
-            QueenMovesCalculator calc = new QueenMovesCalculator(board, myPosition);
+            MovesCalculator calc = new QueenMovesCalculator(board, myPosition);
             return calc.getPossibleMoves();
         } else if (piece.getPieceType() == PieceType.ROOK) {
-            RookMovesCalculator calc = new RookMovesCalculator(board, myPosition);
+            MovesCalculator calc = new RookMovesCalculator(board, myPosition);
             return calc.getPossibleMoves();
         } else {
             return List.of();
