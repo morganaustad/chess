@@ -57,7 +57,9 @@ public class ChessBoard {
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
                 ChessPiece boardPiece = getPiece(new ChessPosition(row, col));
-                if (boardPiece.getPieceType() == pieceType && boardPiece.getTeamColor() == teamColor) {
+                if (boardPiece != null
+                        && boardPiece.getPieceType() == pieceType
+                        && boardPiece.getTeamColor() == teamColor) {
                     piece = new PieceAndLocation(boardPiece, new ChessPosition(row, col));
                 }
             }

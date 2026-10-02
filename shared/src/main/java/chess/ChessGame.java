@@ -98,7 +98,11 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         PieceAndLocation kingPiece = board.findPiece(ChessPiece.PieceType.KING, teamColor);
-        PieceAndLocation[] enemyTeamPieces = getTeamPieces(
+        if (kingPiece == null) {
+            return false;
+        }
+
+        Collection<PieceAndLocation> enemyTeamPieces = getTeamPieces(
                 (TeamColor.WHITE == teamColor) ? TeamColor.BLACK : TeamColor.WHITE
         );
         List<ChessMove> enemyTeamMoves = new ArrayList<>();
@@ -109,7 +113,7 @@ public class ChessGame {
 
         boolean inCheck = false;
         for (ChessMove move : enemyTeamMoves) {
-            if (move.getEndPosition() == kingPiece.boardPosition()) {
+            if (move.getEndPosition().equals(kingPiece.boardPosition())) {
                 inCheck = true;
                 break;
             }
@@ -119,9 +123,8 @@ public class ChessGame {
     }
 
 
-    private PieceAndLocation[] getTeamPieces(TeamColor teamColor) {
-        PieceAndLocation[] teamPieces = new PieceAndLocation[16];
-        int pieceLocationIndex = 0;
+    private Collection<PieceAndLocation> getTeamPieces(TeamColor teamColor) {
+        List<PieceAndLocation> teamPieces = new ArrayList<>();
         ChessPiece boardPiece;
         ChessPosition boardPosition;
 
@@ -131,7 +134,7 @@ public class ChessGame {
                 boardPiece = board.getPiece(boardPosition);
 
                 if (boardPiece != null && boardPiece.getTeamColor() == teamColor) {
-                    teamPieces[pieceLocationIndex] = new PieceAndLocation(boardPiece, boardPosition);
+                    teamPieces.add(new PieceAndLocation(boardPiece, boardPosition));
                 }
             }
         }
@@ -158,7 +161,7 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         PieceAndLocation kingPiece = board.findPiece(ChessPiece.PieceType.KING, teamColor);
-        PieceAndLocation[] enemyTeamPieces = getTeamPieces(
+        Collection<PieceAndLocation> enemyTeamPieces = getTeamPieces(
                 (TeamColor.WHITE == teamColor) ? TeamColor.BLACK : TeamColor.WHITE
         );
         List<ChessMove> enemyTeamMoves = new ArrayList<>();
