@@ -46,6 +46,11 @@ public class ChessMove {
     }
 
 
+    public boolean hasPromotion() {
+        return promotionPiece != null;
+    }
+
+
     @Override
     public String toString() {
         return "ChessMove{" +
