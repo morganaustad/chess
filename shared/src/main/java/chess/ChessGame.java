@@ -12,11 +12,12 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private final ChessBoard board;
+    private ChessBoard board;
     private TeamColor teamTurn;
 
     public ChessGame() {
         board = new ChessBoard();
+        board.resetBoard();
         teamTurn = TeamColor.WHITE;
     }
 
@@ -190,7 +191,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        this.board.setBoard(board);
+        this.board = new ChessBoard(board);
     }
 
     /**
