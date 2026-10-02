@@ -50,6 +50,22 @@ public class ChessBoard {
         return squares[position.getRow() - 1][position.getColumn() - 1];
     }
 
+
+    public PieceAndLocation findPiece(ChessPiece.PieceType pieceType, ChessGame.TeamColor teamColor) {
+        PieceAndLocation piece = null;
+
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece boardPiece = getPiece(new ChessPosition(row, col));
+                if (boardPiece.getPieceType() == pieceType && boardPiece.getTeamColor() == teamColor) {
+                    piece = new PieceAndLocation(boardPiece, new ChessPosition(row, col));
+                }
+            }
+        }
+
+        return piece;
+    }
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
