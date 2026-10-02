@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -50,7 +51,8 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if (board.getPiece(startPosition) == null) { return null; }
+        // TODO: Check on this in the future because I changed it to List.of() cause of testing errors
+        if (board.getPiece(startPosition) == null) { return List.of(); }
 
         return board.getPiece(startPosition).pieceMoves(board, startPosition);
     }

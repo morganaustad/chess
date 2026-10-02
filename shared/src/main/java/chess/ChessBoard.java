@@ -17,6 +17,18 @@ public class ChessBoard {
 
     }
 
+    @SuppressWarnings("CopyConstructorMissesField")
+    public ChessBoard(ChessBoard other) {
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece piece = other.getPiece(new ChessPosition(row, col));
+                if (piece != null) {
+                    squares[row - 1][col - 1] = new ChessPiece(piece);
+                }
+            }
+        }
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
