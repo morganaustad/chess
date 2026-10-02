@@ -1,4 +1,9 @@
-package chess;
+package chess.movescalculators;
+
+import chess.ChessBoard;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +14,7 @@ public class BishopMovesCalculator implements MovesCalculator {
     private final ChessPosition position;
     private final ChessPiece piece;
 
-    BishopMovesCalculator(ChessBoard board, ChessPosition position) {
+    public BishopMovesCalculator(ChessBoard board, ChessPosition position) {
         this.board = board;
         this.position = position;
         this.piece = board.getPiece(position);

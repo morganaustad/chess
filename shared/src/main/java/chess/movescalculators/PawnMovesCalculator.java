@@ -1,4 +1,6 @@
-package chess;
+package chess.movescalculators;
+
+import chess.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +11,7 @@ public class PawnMovesCalculator implements MovesCalculator {
     private final ChessPosition position;
     private final ChessPiece piece;
 
-    PawnMovesCalculator(ChessBoard board, ChessPosition position) {
+    public PawnMovesCalculator(ChessBoard board, ChessPosition position) {
         this.board = board;
         this.position = position;
         this.piece = board.getPiece(position);

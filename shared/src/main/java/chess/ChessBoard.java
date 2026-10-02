@@ -69,6 +69,18 @@ public class ChessBoard {
     }
 
 
+    public ChessBoard setBoard(ChessBoard board) {
+        ChessBoard newBoard = new ChessBoard();
+        for (int x = 1; x <= 8; x++) {
+            for (int y = 1; y <= 8; y++) {
+                newBoard.addPiece(new ChessPosition(x, y), board.getPiece(new ChessPosition(x, y)));
+            }
+        }
+
+        return newBoard;
+    }
+
+
     private boolean isOffBoard(ChessPosition position) {
         return (position.getRow() < 1
                 || position.getRow() > 8
