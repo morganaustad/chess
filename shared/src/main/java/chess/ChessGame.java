@@ -100,14 +100,14 @@ public class ChessGame {
         PieceAndLocation[] enemyTeamPieces = getTeamPieces(
                 (TeamColor.WHITE == teamColor) ? TeamColor.BLACK : TeamColor.WHITE
         );
-        List<ChessMove> teamMoves = new ArrayList<>();
+        List<ChessMove> enemyTeamMoves = new ArrayList<>();
 
         for (PieceAndLocation piece : enemyTeamPieces) {
-            teamMoves.addAll(piece.boardPiece().pieceMoves(board, piece.boardPosition()));
+            enemyTeamMoves.addAll(piece.boardPiece().pieceMoves(board, piece.boardPosition()));
         }
 
         boolean inCheck = false;
-        for (ChessMove move : teamMoves) {
+        for (ChessMove move : enemyTeamMoves) {
             if (move.getEndPosition() == kingPiece.boardPosition()) {
                 inCheck = true;
                 break;
@@ -145,7 +145,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return isInStalemate(teamColor) && isInCheck(teamColor);
     }
 
     /**
@@ -156,7 +156,32 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        PieceAndLocation kingPiece = board.findPiece(ChessPiece.PieceType.KING, teamColor);
+        PieceAndLocation[] enemyTeamPieces = getTeamPieces(
+                (TeamColor.WHITE == teamColor) ? TeamColor.BLACK : TeamColor.WHITE
+        );
+        List<ChessMove> enemyTeamMoves = new ArrayList<>();
+        List<ChessPosition> enemyTeamMovesEndPos = new ArrayList<>();
+        List<ChessMove> kingMoves = new ArrayList<>(kingPiece.boardPiece().pieceMoves(board, kingPiece.boardPosition()));
+        List<ChessPosition> kingMovesEndPos = new ArrayList<>();
+
+        for (PieceAndLocation piece : enemyTeamPieces) {
+            enemyTeamMoves.addAll(piece.boardPiece().pieceMoves(board, piece.boardPosition()));
+        }
+
+        for (ChessMove enemyMove : enemyTeamMoves) {
+            enemyTeamMovesEndPos.add(enemyMove.getEndPosition());
+        }
+
+        for (ChessMove kingMove : kingMoves) {
+            kingMovesEndPos.add(kingMove.getEndPosition());
+        }
+
+        for (ChessPosition enemyMoveEndPos : enemyTeamMovesEndPos) {
+            kingMovesEndPos.remove(enemyMoveEndPos);
+        }
+
+        return kingMovesEndPos.isEmpty();
     }
 
     /**
