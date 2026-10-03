@@ -171,7 +171,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        return isInStalemate(teamColor) && isInCheck(teamColor);
+        return isInCheck(teamColor) && !hasAnyValidMove(teamColor);
     }
 
     /**
@@ -182,32 +182,18 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        PieceAndLocation kingPiece = board.findPiece(ChessPiece.PieceType.KING, teamColor);
-        Collection<PieceAndLocation> enemyTeamPieces = getTeamPieces(
-                (TeamColor.WHITE == teamColor) ? TeamColor.BLACK : TeamColor.WHITE
-        );
-        List<ChessMove> enemyTeamMoves = new ArrayList<>();
-        List<ChessPosition> enemyTeamMovesEndPos = new ArrayList<>();
-        List<ChessMove> kingMoves = new ArrayList<>(kingPiece.boardPiece().pieceMoves(board, kingPiece.boardPosition()));
-        List<ChessPosition> kingMovesEndPos = new ArrayList<>();
+        return !isInCheck(teamColor) && !hasAnyValidMove(teamColor);
+    }
 
-        for (PieceAndLocation piece : enemyTeamPieces) {
-            enemyTeamMoves.addAll(piece.boardPiece().pieceMoves(board, piece.boardPosition()));
+
+    private boolean hasAnyValidMove(TeamColor teamColor) {
+        Collection<PieceAndLocation> teamPieces = getTeamPieces(board, teamColor);
+        for (PieceAndLocation teamPiece : teamPieces) {
+            if (!validMoves(teamPiece.boardPosition()).isEmpty()) {
+                return true;
+            }
         }
-
-        for (ChessMove enemyMove : enemyTeamMoves) {
-            enemyTeamMovesEndPos.add(enemyMove.getEndPosition());
-        }
-
-        for (ChessMove kingMove : kingMoves) {
-            kingMovesEndPos.add(kingMove.getEndPosition());
-        }
-
-        for (ChessPosition enemyMoveEndPos : enemyTeamMovesEndPos) {
-            kingMovesEndPos.remove(enemyMoveEndPos);
-        }
-
-        return kingMovesEndPos.isEmpty();
+        return false;
     }
 
     /**
