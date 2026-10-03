@@ -97,6 +97,11 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        return isInCheck(this.board, teamColor);
+    }
+
+
+    private boolean isInCheck(ChessBoard board, TeamColor teamColor) {
         PieceAndLocation kingPiece = board.findPiece(ChessPiece.PieceType.KING, teamColor);
         if (kingPiece == null) {
             return false;
