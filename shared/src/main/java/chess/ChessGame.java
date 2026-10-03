@@ -53,10 +53,31 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        // TODO: Check on this in the future because I changed it to List.of() cause of testing errors
-        if (board.getPiece(startPosition) == null) { return List.of(); }
+        ChessPiece piece = board.getPiece(startPosition);
+        if (piece == null) { return null; }
 
-        return board.getPiece(startPosition).pieceMoves(board, startPosition);
+        Collection<ChessMove> pieceMoves = piece.pieceMoves(board, startPosition);
+        Collection<ChessMove> validMoves = new ArrayList<>();
+
+        for (ChessMove pieceMove : pieceMoves) {
+            ChessBoard copy = new ChessBoard(board);
+
+            applyMove(copy, pieceMove);
+
+            if (!isInCheck(copy, piece.getTeamColor())) {
+                validMoves.add(pieceMove);
+            }
+        }
+
+        return validMoves;
+    }
+
+
+    private void applyMove(ChessBoard board, ChessMove move) {
+        ChessPiece piece = board.getPiece(move.getStartPosition());
+        board.addPiece(move.getStartPosition(), null);
+        board.addPiece(move.getEndPosition(),
+                move.hasPromotion() ? new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()) : piece);
     }
 
     /**
@@ -73,21 +94,16 @@ public class ChessGame {
             throw new InvalidMoveException("Invalid Move: no piece at starting position");
         }
 
-        ChessPiece piece = board.getPiece(startPos);
-        Collection<ChessMove> pieceMoves = piece.pieceMoves(board, startPos);
-
-        if (pieceMoves.contains(move)) {
-            board.addPiece(startPos, null);
-
-            if (move.hasPromotion()) {
-                ChessPiece promotionPiece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
-                board.addPiece(endPos, promotionPiece);
-            } else {
-                board.addPiece(endPos, piece);
-            }
-        } else {
-            throw new InvalidMoveException("Invalid Move: Piece cannot move that way");
+        if (board.getPiece(startPos).getTeamColor() != teamTurn) {
+            throw new InvalidMoveException("Invalid Move: not this piece's turn");
         }
+
+        if (!validMoves(startPos).contains(move)) {
+            throw new InvalidMoveException("Invalid Move: not a valid move");
+        }
+
+        applyMove(board, move);
+        teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
 
     /**
@@ -108,6 +124,7 @@ public class ChessGame {
         }
 
         Collection<PieceAndLocation> enemyTeamPieces = getTeamPieces(
+                board,
                 (TeamColor.WHITE == teamColor) ? TeamColor.BLACK : TeamColor.WHITE
         );
         List<ChessMove> enemyTeamMoves = new ArrayList<>();
@@ -128,7 +145,7 @@ public class ChessGame {
     }
 
 
-    private Collection<PieceAndLocation> getTeamPieces(TeamColor teamColor) {
+    private Collection<PieceAndLocation> getTeamPieces(ChessBoard board, TeamColor teamColor) {
         List<PieceAndLocation> teamPieces = new ArrayList<>();
         ChessPiece boardPiece;
         ChessPosition boardPosition;
