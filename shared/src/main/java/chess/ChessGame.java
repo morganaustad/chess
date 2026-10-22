@@ -88,7 +88,6 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition startPos = move.getStartPosition();
-        ChessPosition endPos = move.getEndPosition();
 
         if (board.getPiece(startPos) == null) {
             throw new InvalidMoveException("Invalid Move: no piece at starting position");
