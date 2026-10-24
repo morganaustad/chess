@@ -4,28 +4,40 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import model.AuthData;
 
-public class MemoryAuthDAO implements AuthDAO {
-    public MemoryAuthDAO() {
+import java.util.HashMap;
 
+public class MemoryAuthDAO implements AuthDAO {
+    private final HashMap<String, AuthData> authMemory;
+
+    public MemoryAuthDAO() {
+        authMemory = new HashMap<>(5);
     }
 
     @Override
     public void insertAuth(AuthData auth) throws DataAccessException {
-        throw new RuntimeException("Not implemented");
+        authMemory.put(auth.authToken(), auth);
     }
 
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
-        throw new RuntimeException("Not implemented");
+        if (authMemory.containsKey(authToken)) {
+            return authMemory.get(authToken);
+        } else {
+            throw new DataAccessException("No valid authToken");
+        }
     }
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
-        throw new RuntimeException("Not implemented");
+        if (authMemory.containsKey(authToken)) {
+            authMemory.remove(authToken);
+        } else {
+            throw new DataAccessException("No valid authToken");
+        }
     }
 
     @Override
     public void deleteAll() throws DataAccessException {
-        throw new RuntimeException("Not implemented");
+        authMemory.clear();
     }
 }
