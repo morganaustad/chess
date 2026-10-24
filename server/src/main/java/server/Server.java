@@ -1,6 +1,15 @@
 package server;
 
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
+import dataaccess.memory.MemoryAuthDAO;
+import dataaccess.memory.MemoryGameDAO;
+import dataaccess.memory.MemoryUserDAO;
 import io.javalin.*;
+import service.ClearService;
+import service.GameService;
+import service.UserService;
 
 public class Server {
 
@@ -9,7 +18,13 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        // Register your endpoints and exception handlers here.
+        AuthDAO authDAO = new MemoryAuthDAO();
+        UserDAO userDAO = new MemoryUserDAO();
+        GameDAO gameDAO = new MemoryGameDAO();
+
+        GameService gameService = new GameService(authDAO, gameDAO);
+        UserService userService = new UserService(authDAO, userDAO);
+        ClearService clearService = new ClearService(authDAO, userDAO, gameDAO);
 
     }
 
