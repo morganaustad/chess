@@ -9,35 +9,49 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MemoryGameDAO implements GameDAO {
-    private final HashMap<Integer, GameData> gameMemory;
-
-    public MemoryGameDAO() {
-        gameMemory = new HashMap<>(5);
-    }
+    private int nextID = 1;
+    private final HashMap<Integer, GameData> gameMemory = new HashMap<>();
 
 
     @Override
     public int insertGame(GameData game) throws DataAccessException {
-        gameMemory.put()
+        GameData newGame = new GameData(
+                nextID++,
+                game.whiteUsername(),
+                game.blackUsername(),
+                game.gameName(),
+                game.game()
+        );
+        gameMemory.put(newGame.gameID(), newGame);
+
+        return newGame.gameID();
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
-        return null;
+        if (gameMemory.containsKey(gameID)) {
+            return gameMemory.get(gameID);
+        } else {
+            throw new DataAccessException("No such game");
+        }
     }
 
     @Override
     public Collection<GameData> listGames() throws DataAccessException {
-        return List.of();
+        return gameMemory.values();
     }
 
     @Override
     public void updateGame(GameData updatedGame) throws DataAccessException {
-
+        if (gameMemory.containsKey(updatedGame.gameID())) {
+            gameMemory.put(updatedGame.gameID(), updatedGame);
+        } else {
+            throw new DataAccessException("No such game");
+        }
     }
 
     @Override
     public void deleteAll() throws DataAccessException {
-
+        gameMemory.clear();
     }
 }
