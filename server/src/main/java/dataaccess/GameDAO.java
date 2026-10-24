@@ -7,15 +7,13 @@ import java.util.Collection;
 
 public interface GameDAO {
 
-    GameData createGame(String gameName);
+    void insertGame(GameData game) throws DataAccessException;
 
-    GameData getGame(int gameID);
+    GameData getGame(int gameID) throws DataAccessException;
 
-    Collection<GameData> listGames();
+    Collection<GameData> listGames() throws DataAccessException;
 
-    GameData updateGame(int gameID, ChessGame game);
+    GameData updateGame(GameData updatedGame) throws DataAccessException;
 
-    void deleteGame(int gameID);
-
-    void deleteAll();
+    void deleteAll() throws DataAccessException;
 }
