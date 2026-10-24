@@ -1,0 +1,20 @@
+package server.handler;
+
+import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import service.ClearService;
+import io.javalin.http.Context;
+
+public class ClearHandler {
+    private final ClearService clearService;
+
+    public ClearHandler(ClearService clearService) {
+        this.clearService = clearService;
+    }
+
+    public void clear(Context ctx) throws DataAccessException {
+        clearService.clear();
+        ctx.status(200);
+        ctx.json("{}");
+    }
+}
