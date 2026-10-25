@@ -12,6 +12,7 @@ import io.javalin.*;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import server.handler.ClearHandler;
+import server.handler.GameHandler;
 import server.handler.UserHandler;
 import service.ClearService;
 import service.GameService;
@@ -28,6 +29,7 @@ public class Server {
 
     private final ClearHandler clearHandler;
     private final UserHandler userHandler;
+    private final GameHandler gameHandler;
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -42,6 +44,7 @@ public class Server {
 
         clearHandler = new ClearHandler(clearService);
         userHandler = new UserHandler(userService);
+        gameHandler = new GameHandler(gameService);
 
         registerRoutes(javalin);
         registerExceptions(javalin);
@@ -62,6 +65,11 @@ public class Server {
 
         javalin.post("/user", userHandler::register);
         javalin.post("/session", userHandler::login);
+        javalin.post("/game", gameHandler::createGame);
+
+        javalin.put("/game", gameHandler::joinGame);
+
+        javalin.get("/game", gameHandler::listGames);
     }
 
     private void registerExceptions(Javalin javalin) {
