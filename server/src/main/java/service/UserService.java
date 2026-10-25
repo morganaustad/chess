@@ -20,7 +20,15 @@ public class UserService {
     }
 
     public AuthData register(UserData user) throws BadRequestException, AlreadyTakenException, DataAccessException {
-        if (user == null) {
+        if (
+                user == null
+                || user.username() == null
+                || user.password() == null
+                || user.email() == null
+                || user.username().isBlank()
+                || user.password().isBlank()
+                || user.email().isBlank()
+        ) {
             throw new BadRequestException("Bad Request");
         }
 
