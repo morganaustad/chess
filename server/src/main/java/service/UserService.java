@@ -8,7 +8,7 @@ import model.UserData;
 import service.exception.AlreadyTakenException;
 import service.exception.BadRequestException;
 import service.exception.UnauthorizedException;
-import service.request.LoginRequest;
+import service.requestsponse.LoginRequest;
 
 import java.util.UUID;
 

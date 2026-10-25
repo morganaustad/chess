@@ -2,12 +2,11 @@ package server.handler;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
 import io.javalin.http.Context;
 import model.AuthData;
 import model.UserData;
 import service.UserService;
-import service.request.LoginRequest;
+import service.requestsponse.LoginRequest;
 
 public class UserHandler {
     private final UserService userService;
