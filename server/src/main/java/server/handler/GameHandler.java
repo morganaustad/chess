@@ -20,14 +20,14 @@ public class GameHandler {
 
     public void listGames(Context ctx) throws DataAccessException {
         String authToken = ctx.header("authorization");
-        ctx.json(gameService.listGames(authToken));
+        ctx.json(gson.toJson(gameService.listGames(authToken)));
         ctx.status(200);
     }
 
     public void createGame(Context ctx) throws DataAccessException {
         String authToken = ctx.header("authorization");
         CreateGameRequest createRequest = gson.fromJson(ctx.body(), CreateGameRequest.class);
-        ctx.json(gameService.createGame(authToken, createRequest));
+        ctx.json(gson.toJson(gameService.createGame(authToken, createRequest)));
         ctx.status(200);
     }
 
@@ -35,7 +35,7 @@ public class GameHandler {
         String authToken = ctx.header("authorization");
         JoinGameRequest joinRequest = gson.fromJson(ctx.body(), JoinGameRequest.class);
         gameService.joinGame(authToken, joinRequest);
-        ctx.json(Map.of());
+        ctx.json(gson.toJson(Map.of()));
         ctx.status(200);
     }
 }

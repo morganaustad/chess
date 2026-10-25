@@ -20,23 +20,24 @@ public class UserHandler {
     public void register(Context ctx) throws DataAccessException {
         UserData user = gson.fromJson(ctx.body(), UserData.class);
         AuthData auth = userService.register(user);
-        writeJson(ctx, 200, auth);
+        writeJson(ctx, auth);
     }
 
     public void login(Context ctx) throws DataAccessException {
         LoginRequest loginRequest = gson.fromJson(ctx.body(), LoginRequest.class);
         AuthData auth = userService.login(loginRequest);
-        writeJson(ctx, 200, auth);
+        writeJson(ctx, auth);
     }
 
     public void logout(Context ctx) throws DataAccessException {
         String authToken = ctx.header("authorization");
         userService.logout(authToken);
-        writeJson(ctx, 200, null);
+        ctx.json(gson.toJson(null));
+        ctx.status(200);
     }
 
-    private void writeJson(Context ctx, int status, AuthData body) {
-        ctx.status(status);
+    private void writeJson(Context ctx, AuthData body) {
+        ctx.status(200);
         ctx.json(gson.toJson(body));
     }
 
