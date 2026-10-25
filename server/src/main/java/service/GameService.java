@@ -4,12 +4,11 @@ import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
+import model.AuthData;
 import model.GameData;
+import service.exception.AlreadyTakenException;
 import service.exception.BadRequestException;
-import service.requestsponse.CreateGameRequest;
-import service.requestsponse.CreateGameResult;
-import service.requestsponse.GameSummary;
-import service.requestsponse.ListGamesResult;
+import service.requestsponse.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,7 +36,7 @@ public class GameService {
         return new ListGamesResult(summaries);
     }
 
-    public CreateGameResult CreateGame(String authToken, CreateGameRequest gameRequest) throws DataAccessException {
+    public CreateGameResult createGame(String authToken, CreateGameRequest gameRequest) throws DataAccessException {
         verifyAuth(authToken, authDAO);
 
         if (
@@ -58,5 +57,51 @@ public class GameService {
         );
 
         return new CreateGameResult(id);
+    }
+
+    public void joinGame(String authToken, JoinGameRequest joinRequest) throws DataAccessException {
+        AuthData auth = verifyAuth(authToken, authDAO);
+
+        if (
+                joinRequest == null
+                || joinRequest.playerColor() == null
+        ) {
+            throw new BadRequestException("Bad Join Game Request");
+        }
+
+        GameData game = gameDAO.getGame(joinRequest.gameID());
+
+        if (game == null) { throw new BadRequestException("Bad Join Game Get Game Request"); }
+
+        GameData updatedGame = claimColor(game, joinRequest.playerColor(), auth.username());
+        gameDAO.updateGame(updatedGame);
+    }
+
+    private GameData claimColor(GameData game, ChessGame.TeamColor requestedColor, String username) {
+        if (requestedColor == ChessGame.TeamColor.WHITE) {
+            if (game.whiteUsername() != null) {
+                throw new AlreadyTakenException("White already taken");
+            }
+
+            return new GameData(
+                    game.gameID(),
+                    username,
+                    game.blackUsername(),
+                    game.gameName(),
+                    game.game()
+            );
+        } else {
+            if (game.blackUsername() != null) {
+                throw new AlreadyTakenException("Black already taken");
+            }
+
+            return new GameData(
+                    game.gameID(),
+                    game.whiteUsername(),
+                    username,
+                    game.gameName(),
+                    game.game()
+            );
+        }
     }
 }
