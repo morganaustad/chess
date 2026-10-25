@@ -58,8 +58,10 @@ public class Server {
 
     private void registerRoutes(Javalin javalin) {
         javalin.delete("/db", clearHandler::clear);
+        javalin.delete("/session", userHandler::logout);
 
         javalin.post("/user", userHandler::register);
+        javalin.post("/session", userHandler::login);
     }
 
     private void registerExceptions(Javalin javalin) {
