@@ -9,18 +9,25 @@ import dataaccess.memory.MemoryAuthDAO;
 import dataaccess.memory.MemoryGameDAO;
 import dataaccess.memory.MemoryUserDAO;
 import io.javalin.*;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import server.handler.ClearHandler;
+import server.handler.UserHandler;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
+import service.exception.AlreadyTakenException;
+import service.exception.BadRequestException;
+import service.exception.UnauthorizedException;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Server {
 
     private final Javalin javalin;
+
+    private final ClearHandler clearHandler;
+    private final UserHandler userHandler;
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -33,12 +40,11 @@ public class Server {
         UserService userService = new UserService(authDAO, userDAO);
         ClearService clearService = new ClearService(authDAO, userDAO, gameDAO);
 
-        ClearHandler clearHandler = new ClearHandler(clearService);
+        clearHandler = new ClearHandler(clearService);
+        userHandler = new UserHandler(userService);
 
-        javalin.delete("/db", clearHandler::clear);
-
-        javalin.exception(DataAccessException.class, this::dataException);
-        javalin.exception(Exception.class, this::otherException);
+        registerRoutes(javalin);
+        registerExceptions(javalin);
     }
 
     public int run(int desiredPort) {
@@ -50,19 +56,57 @@ public class Server {
         javalin.stop();
     }
 
-    private void dataException(DataAccessException ex, Context ctx) {
+    private void registerRoutes(Javalin javalin) {
+        javalin.delete("/db", clearHandler::clear);
+
+        javalin.post("/user", userHandler::register);
+    }
+
+    private void registerExceptions(Javalin javalin) {
+        javalin.exception(DataAccessException.class, this::dataException);
+        javalin.exception(Exception.class, this::otherException);
+        javalin.exception(BadRequestException.class, this::badRequestException);
+        javalin.exception(AlreadyTakenException.class, this::alreadyTakenException);
+        javalin.exception(UnauthorizedException.class, this::unauthorizedException);
+    }
+
+    private String gsonMapping(String input1, String input2) {
         Gson gson = new Gson();
-        String json = gson.toJson(Map.of("message:", "Error: " + ex.getMessage()));
+        return gson.toJson(Map.of(input1, input2));
+    }
+
+    private void dataException(DataAccessException ex, Context ctx) {
+        String json = gsonMapping("message", "Error: " + ex.getMessage());
 
         ctx.status(500);
         ctx.json(json);
     }
 
     private void otherException(Exception ex, Context ctx) {
-        Gson gson = new Gson();
-        String json = gson.toJson(Map.of("message:", "Error: Something went wrong"));
+        String json = gsonMapping("message", "Error: Something went wrong");
 
         ctx.status(500);
+        ctx.json(json);
+    }
+
+    private void badRequestException(BadRequestException ex, Context ctx) {
+        String json = gsonMapping("message", "Error: " + ex.getMessage());
+
+        ctx.status(400);
+        ctx.json(json);
+    }
+
+    private void alreadyTakenException(AlreadyTakenException ex, Context ctx) {
+        String json = gsonMapping("message", "Error: " + ex.getMessage());
+
+        ctx.status(403);
+        ctx.json(json);
+    }
+
+    private void unauthorizedException(UnauthorizedException ex, Context ctx) {
+        String json = gsonMapping("message", "Error: " + ex.getMessage());
+
+        ctx.status(401);
         ctx.json(json);
     }
 }
