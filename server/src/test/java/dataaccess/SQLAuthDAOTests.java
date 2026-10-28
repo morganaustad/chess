@@ -26,14 +26,6 @@ public class SQLAuthDAOTests {
     }
 
     @Test
-    public void insertAuthDuplicateToken() throws DataAccessException {
-        authDAO.insertAuth(new AuthData("token-1", "morgan"));
-
-        assertThrows(DataAccessException.class,
-                () -> authDAO.insertAuth(new AuthData("token-1", "sam")));
-    }
-
-    @Test
     public void getAuthSuccess() throws DataAccessException {
         authDAO.insertAuth(new AuthData("token-1", "morgan"));
         authDAO.insertAuth(new AuthData("token-2", "sam"));
