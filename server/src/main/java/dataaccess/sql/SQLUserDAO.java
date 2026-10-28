@@ -62,6 +62,13 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public void deleteAll() throws DataAccessException {
-
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "DELETE FROM user";
+            try (PreparedStatement pstmt = conn.prepareStatement(statement)) {
+                pstmt.executeUpdate();
+            }
+        } catch (Exception ex) {
+            throw new DataAccessException("Error: unable to delete user table." + ex);
+        }
     }
 }
