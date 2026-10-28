@@ -1,12 +1,13 @@
 package service;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import model.AuthData;
 import service.exception.BadRequestException;
 import service.exception.UnauthorizedException;
 
 public class VerifyService {
-    public static AuthData verifyAuth(String authToken, AuthDAO authDAO) {
+    public static AuthData verifyAuth(String authToken, AuthDAO authDAO) throws DataAccessException {
         if (
                 authToken == null
                 || authToken.isBlank()

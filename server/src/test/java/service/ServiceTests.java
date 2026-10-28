@@ -71,7 +71,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void registerBadRequest() {
+    public void registerBadRequest() throws DataAccessException {
         assertThrows(BadRequestException.class,
                 () -> userService.register(new UserData("morgan", null, "morgan@example.com")));
         assertThrows(BadRequestException.class,
