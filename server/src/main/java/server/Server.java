@@ -47,7 +47,7 @@ public class Server {
             userDAO = new SQLUserDAO();
             gameDAO = new SQLGameDAO();
         } catch (Exception ex) {
-            throw new RuntimeException("Unable to connect databases: " + ex);
+            throw new RuntimeException("Error: Unable to connect databases: " + ex);
         }
 
         GameService gameService = new GameService(authDAO, gameDAO);

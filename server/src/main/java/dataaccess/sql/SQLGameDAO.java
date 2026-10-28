@@ -8,6 +8,11 @@ import java.util.Collection;
 import java.util.List;
 
 public class SQLGameDAO implements GameDAO {
+
+    public SQLGameDAO() throws DataAccessException {
+        DatabaseHelper.initialize();
+    }
+
     @Override
     public int insertGame(GameData game) throws DataAccessException {
         return 0;

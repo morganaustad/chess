@@ -5,6 +5,11 @@ import dataaccess.DataAccessException;
 import model.AuthData;
 
 public class SQLAuthDAO implements AuthDAO {
+
+    public SQLAuthDAO() throws DataAccessException {
+        DatabaseHelper.initialize();
+    }
+
     @Override
     public void insertAuth(AuthData auth) throws DataAccessException {
 
