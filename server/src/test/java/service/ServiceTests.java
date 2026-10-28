@@ -13,6 +13,7 @@ import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import service.exception.AlreadyTakenException;
 import service.exception.BadRequestException;
 import service.exception.UnauthorizedException;
@@ -58,7 +59,8 @@ public class ServiceTests {
         assertEquals("morgan", auth.username());
         assertNotNull(auth.authToken());
         assertFalse(auth.authToken().isBlank());
-        assertEquals(user, userDAO.getUser("morgan"));
+        assertEquals(user.username(), userDAO.getUser("morgan").username());
+        assertEquals(user.email(), userDAO.getUser("morgan").email());
         assertEquals(auth, authDAO.getAuth(auth.authToken()));
     }
 

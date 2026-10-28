@@ -14,6 +14,7 @@ import dataaccess.sql.SQLUserDAO;
 import io.javalin.*;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
+import org.eclipse.jetty.server.Authentication;
 import server.handler.ClearHandler;
 import server.handler.GameHandler;
 import server.handler.UserHandler;
@@ -37,9 +38,17 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        AuthDAO authDAO = new SQLAuthDAO();
-        UserDAO userDAO = new SQLUserDAO();
-        GameDAO gameDAO = new SQLGameDAO();
+        AuthDAO authDAO;
+        UserDAO userDAO;
+        GameDAO gameDAO;
+
+        try {
+            authDAO = new SQLAuthDAO();
+            userDAO = new SQLUserDAO();
+            gameDAO = new SQLGameDAO();
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to connect databases: " + ex);
+        }
 
         GameService gameService = new GameService(authDAO, gameDAO);
         UserService userService = new UserService(authDAO, userDAO);
