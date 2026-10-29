@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SQLAuthDAOTests {
     private SQLAuthDAO authDAO;
 
+    // Setup new auth and delete between tests
     @BeforeEach
     public void setUp() throws DataAccessException {
         authDAO = new SQLAuthDAO();
