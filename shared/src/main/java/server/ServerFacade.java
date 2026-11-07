@@ -5,8 +5,7 @@ import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import model.requestresponse.CreateGameRequest;
-import model.requestresponse.CreateGameResult;
+import model.requestresponse.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -24,42 +23,61 @@ public class ServerFacade {
         serverUrl = url;
     }
 
+    public ServerFacade(int port) {
+        serverUrl = "http://localhost:" + port;
+    }
+
     public AuthData register(UserData info) throws ResponseException {
-        var request = buildRequest("POST", "/user", info);
+        var request = buildRequest("POST", "/user", info, null);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
 
-    public AuthData login(UserData info) throws ResponseException {
-        var request = buildRequest("POST", "/session", info);
+    public AuthData login(LoginRequest info) throws ResponseException {
+        var request = buildRequest("POST", "/session", info, null);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
 
-    public CreateGameResult createGame(CreateGameRequest info) throws ResponseException {
-        var request = buildRequest("POST", "/game", info);
+    public CreateGameResult createGame(CreateGameRequest info, String authToken) throws ResponseException {
+        var request = buildRequest("POST", "/game", info, authToken);
         var response = sendRequest(request);
         return handleResponse(response, CreateGameResult.class);
     }
 
     public void clear() throws ResponseException {
-        var request = buildRequest("DELETE", "/db", null);
+        var request = buildRequest("DELETE", "/db", null, null);
         var response = sendRequest(request);
         handleResponse(response, null);
     }
 
-    public void logout(AuthData info) throws ResponseException {
-        var request = buildRequest("DELETE", "/session", info);
+    public void logout(String authToken) throws ResponseException {
+        var request = buildRequest("DELETE", "/session", null, authToken);
         var response = sendRequest(request);
         handleResponse(response, null);
     }
 
-    private HttpRequest buildRequest(String method, String path, Object body) {
+    public void joinGame(JoinGameRequest info, String authToken) throws ResponseException {
+        var request = buildRequest("PUT", "/game", info, authToken);
+        var response = sendRequest(request);
+        handleResponse(response, null);
+    }
+
+    public ListGamesResult listGames(String authToken) throws ResponseException {
+        var request = buildRequest("GET", "/game", null, authToken);
+        var response = sendRequest(request);
+        return handleResponse(response, ListGamesResult.class);
+    }
+
+    private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
+        }
+        if (authToken != null) {
+            request.setHeader("authorization", authToken);
         }
         return request.build();
     }
