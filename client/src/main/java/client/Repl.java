@@ -4,16 +4,18 @@ import chess.ChessGame;
 import exception.ResponseException;
 import model.requestresponse.CreateGameResult;
 import model.requestresponse.GameSummary;
-import model.requestresponse.ListGamesResult;
 import server.ServerFacade;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Repl {
     private final ServerFacade server;
     private String authToken = null;
     private State state = State.SIGNEDOUT;
+    private List<GameSummary> games = new ArrayList<>();
 
     public Repl(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -26,14 +28,15 @@ public class Repl {
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
+            System.out.print(">>> ");
             String line = scanner.nextLine();
 
             try {
                 result = eval(line);
-                System.out.print(result);
+                System.out.print(result + "\n");
             } catch (Throwable ex) {
                 var message = ex.toString();
-                System.out.print(message);
+                System.out.print(message + "\n");
             }
         }
         System.out.println();
@@ -61,8 +64,8 @@ public class Repl {
 
     private String eval(String input) {
         try {
-            String[] tokens = input.toLowerCase().split(" ");
-            String cmd = (tokens.length > 0) ? tokens[0] : "help";
+            String[] tokens = input.split(" ");
+            String cmd = (tokens.length > 0) ? tokens[0].toLowerCase() : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
 
             return switch (cmd) {
@@ -113,29 +116,70 @@ public class Repl {
     }
 
     private String listGames() throws ResponseException {
-        var gamesList = server.listGames(authToken).games().iterator();
+        games = new ArrayList<>(server.listGames(authToken).games());
+        if (games.isEmpty()) {
+            return "No games yet. Create one with: createGame <gameName>";
+        }
+
         StringBuilder result = new StringBuilder();
-        while (gamesList.hasNext()) {
-            GameSummary game = gamesList.next();
-            result.append(String.format(
-                    "%d %s %s %s",
-                    game.gameID(),
-                    game.gameName(),
-                    game.whiteUsername(),
-                    game.blackUsername()
-            ));
+        for (int i = 0; i < games.toArray().length - 1; i++) {
+            GameSummary game = games.get(i);
+            String white = game.whiteUsername() == null ? "<open>" : game.whiteUsername();
+            String black = game.blackUsername() == null ? "<open>" : game.blackUsername();
+            result.append(
+                    String.format(
+                            "%d] %s White: %s Black: &s\n",
+                            i + 1,
+                            game.gameName(),
+                            white,
+                            black
+                    )
+            );
         }
 
         return result.toString();
     }
 
+    private GameSummary gameFromListNumber(String input) throws ResponseException {
+        int num;
+
+        try {
+            num = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Game number must be a number.");
+        }
+
+        if (games.isEmpty()) {
+            throw new ResponseException(
+                    ResponseException.Code.ClientError,
+                    "Games not found. Try running listGames to refresh the feed."
+            );
+        }
+
+        if (num < 1 || num > games.size()) {
+            throw new ResponseException(
+                    ResponseException.Code.ClientError,
+                    "No game " + num + ". Pick 1-" + games.size());
+        }
+
+        return games.get(num - 1);
+    }
+
     private String joinGame(String... params) throws ResponseException {
         if (params.length >= 2) {
             ChessGame.TeamColor color = (
-                    params[0].toLowerCase().equals("white")) ?
+                    params[1].equalsIgnoreCase("white")) ?
                     ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
 
-            server.joinGame(color, Integer.parseInt(params[0]), authToken);
+            int gameNumber = 0;
+            try {
+                gameNumber = Integer.parseInt(params[0]);
+            } catch (NumberFormatException ex) {
+                throw new ResponseException(ResponseException.Code.ClientError, "Game ID must be a number");
+            }
+
+            server.joinGame(color, gameNumber, authToken);
+            return "Joined game: " + params[0];
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: <gameID> <color>");
     }

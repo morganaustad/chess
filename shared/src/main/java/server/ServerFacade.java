@@ -14,6 +14,7 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Map;
 
 import static exception.ResponseException.Code.ClientError;
 import static exception.ResponseException.Code.ServerError;
@@ -109,7 +110,8 @@ public class ServerFacade {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
             var code = (status >= 500) ? ServerError : ClientError;
-            String message = (response.body().isBlank()) ? "Error: something went wrong." : response.body();
+            String message = new Gson().fromJson(response.body(), Map.class).get("message").toString();
+            if (message.isEmpty()) { message = "Something went wrong."; }
             throw new ResponseException(code, message);
         }
 
