@@ -141,4 +141,11 @@ public class ServerFacadeTests {
                 () -> facade.login("player", "pass"));
     }
 
+    @Test
+    public void useUnused() {
+        ResponseException ex = new ResponseException(ResponseException.Code.ClientError, "Hello test");
+
+        assertEquals(ResponseException.Code.ClientError, ex.code());
+    }
+
 }
