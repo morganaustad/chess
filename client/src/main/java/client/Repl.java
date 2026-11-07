@@ -1,6 +1,10 @@
 package client;
 
+import chess.ChessGame;
 import exception.ResponseException;
+import model.requestresponse.CreateGameResult;
+import model.requestresponse.GameSummary;
+import model.requestresponse.ListGamesResult;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -98,5 +102,41 @@ public class Repl {
         server.logout(authToken);
         state = State.SIGNEDOUT;
         return "You are now signed out.";
+    }
+
+    private String createGame(String... params) throws ResponseException {
+        if (params.length >= 1) {
+            CreateGameResult gameResult = server.createGame(params[0], authToken);
+            return "Game created with the ID: " + gameResult.gameID();
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <gameName>");
+    }
+
+    private String listGames() throws ResponseException {
+        var gamesList = server.listGames(authToken).games().iterator();
+        StringBuilder result = new StringBuilder();
+        while (gamesList.hasNext()) {
+            GameSummary game = gamesList.next();
+            result.append(String.format(
+                    "%d %s %s %s",
+                    game.gameID(),
+                    game.gameName(),
+                    game.whiteUsername(),
+                    game.blackUsername()
+            ));
+        }
+
+        return result.toString();
+    }
+
+    private String joinGame(String... params) throws ResponseException {
+        if (params.length >= 2) {
+            ChessGame.TeamColor color = (
+                    params[0].toLowerCase().equals("white")) ?
+                    ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+
+            server.joinGame(color, Integer.parseInt(params[0]), authToken);
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <gameID> <color>");
     }
 }
