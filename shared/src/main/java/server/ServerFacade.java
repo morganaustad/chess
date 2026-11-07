@@ -15,6 +15,10 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.rmi.ServerError;
+
+import static exception.ResponseException.Code.ClientError;
+import static exception.ResponseException.Code.ServerError;
 
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
@@ -106,12 +110,9 @@ public class ServerFacade {
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
-            var body = response.body();
-            if (body != null) {
-                throw ResponseException.fromJson(body);
-            }
-
-            throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
+            var code = (status >= 500) ? ServerError : ClientError;
+            String message = (response.body().isBlank()) ? "Error: something went wrong." : response.body();
+            throw new ResponseException(code, message);
         }
 
         if (responseClass != null) {

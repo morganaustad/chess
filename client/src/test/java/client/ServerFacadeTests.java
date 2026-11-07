@@ -32,7 +32,7 @@ public class ServerFacadeTests {
     }
 
     @BeforeEach
-    static void resetAll() throws ResponseException {
+    void resetAll() throws ResponseException {
         facade.clear();
     }
 
@@ -128,7 +128,7 @@ public class ServerFacadeTests {
     public void joinGameBadID() throws ResponseException {
         AuthData auth = facade.register("player", "pass", "em");
         assertThrows(ResponseException.class,
-                () -> facade.joinGame(ChessGame.TeamColor.WHITE, 9999, auth.authToken()))
+                () -> facade.joinGame(ChessGame.TeamColor.WHITE, 9999, auth.authToken()));
     }
 
     @Test
