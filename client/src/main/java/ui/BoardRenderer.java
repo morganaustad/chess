@@ -8,11 +8,11 @@ import chess.ChessPosition;
 import static ui.EscapeSequences.*;
 
 public class BoardRenderer {
-    private static final String BORDER_BG = SET_BG_COLOR_WHITE;
-    private static final String BORDER_TEXT = SET_TEXT_COLOR_BLACK;
+    private static final String BORDER_BG = SET_BG_COLOR_BLACK;
+    private static final String BORDER_TEXT = SET_TEXT_COLOR_WHITE;
     private static final String LIGHT_BG = SET_BG_COLOR_YELLOW;
     private static final String DARK_BG = SET_BG_COLOR_MAGENTA;
-    private static final String WHITE_PIECE_TEXT = SET_TEXT_COLOR_WHITE;
+    private static final String WHITE_PIECE_TEXT = SET_TEXT_COLOR_BLACK;
     private static final String BLACK_PIECE_TEXT = SET_TEXT_COLOR_BLACK;
 
     public static String render(ChessBoard board, ChessGame.TeamColor perspective) {

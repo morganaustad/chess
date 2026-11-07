@@ -1,10 +1,11 @@
 package client;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import exception.ResponseException;
-import model.requestresponse.CreateGameResult;
 import model.requestresponse.GameSummary;
 import server.ServerFacade;
+import ui.BoardRenderer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -201,8 +202,9 @@ public class Repl {
         }
 
         server.joinGame(color, game.gameID(), authToken);
-        // TODO: Game shindig in this hizzy
-        return "Joined " + game.gameName() + " as " + color + ".\n";
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        return "Joined " + game.gameName() + " as " + color + ".\n" + BoardRenderer.render(board, color);
     }
 
     private String observeGame(String... params) throws ResponseException {
@@ -216,8 +218,10 @@ public class Repl {
         }
 
         GameSummary game = gameFromListNumber(params[0]);
-        // TODO: The whole game shindig here
-        return " ";
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+
+        return "Observing " + game.gameName() + "\n" + BoardRenderer.render(board, ChessGame.TeamColor.WHITE);
     }
 
     private void verifyIsState(State state) throws ResponseException {
