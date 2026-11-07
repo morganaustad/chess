@@ -56,7 +56,8 @@ public class Repl {
                - logout
                - createGame <gameName>
                - listGames
-               - joinGame <gameID> <color>
+               - joinGame <game number> <color>
+               - observe <game number>
                - help
                - quit
                """;
@@ -75,6 +76,7 @@ public class Repl {
                 case "creategame" -> createGame(params);
                 case "listgames" -> listGames();
                 case "joingame" -> joinGame(params);
+                case "observe" -> observeGame(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -110,7 +112,7 @@ public class Repl {
     private String createGame(String... params) throws ResponseException {
         if (params.length >= 1) {
             CreateGameResult gameResult = server.createGame(params[0], authToken);
-            return "Game created with the ID: " + gameResult.gameID();
+            return "Game created: " + params[0];
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: <gameName>");
     }
@@ -187,6 +189,18 @@ public class Repl {
         }
 
         server.joinGame(color, game.gameID(), authToken);
+        // TODO: Game shindig in this hizzy
         return "Joined " + game.gameName() + " as " + color + ".\n";
+    }
+
+    private String observeGame(String... params) throws ResponseException {
+        if (params.length != 1) {
+            throw new ResponseException(
+                    ResponseException.Code.ClientError,
+                    "Expected: <game number>"
+            );
+        }
+        // TODO: The whole game shindig here
+        return " ";
     }
 }
