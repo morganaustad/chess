@@ -4,7 +4,6 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthData;
-import model.GameData;
 import model.UserData;
 import model.requestresponse.*;
 
@@ -15,7 +14,6 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.rmi.ServerError;
 
 import static exception.ResponseException.Code.ClientError;
 import static exception.ResponseException.Code.ServerError;

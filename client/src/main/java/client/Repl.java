@@ -78,10 +78,25 @@ public class Repl {
 
     private String register(String... params) throws ResponseException {
         if (params.length >= 3) {
-            server.register(params[0], params[1], params[2]);
+            authToken = server.register(params[0], params[1], params[2]).authToken();
             state = State.SIGNEDIN;
             return "Registered! You are now signed in as: " + params[0];
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: <username> <password> <email>");
+    }
+
+    private String login(String... params) throws ResponseException {
+        if (params.length >= 2) {
+            authToken = server.login(params[0], params[1]).authToken();
+            state = State.SIGNEDIN;
+            return "You are now signed in as: " + params[0];
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <username> <password>");
+    }
+
+    private String logout() throws ResponseException {
+        server.logout(authToken);
+        state = State.SIGNEDOUT;
+        return "You are now signed out.";
     }
 }
