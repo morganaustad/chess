@@ -166,21 +166,27 @@ public class Repl {
     }
 
     private String joinGame(String... params) throws ResponseException {
-        if (params.length >= 2) {
-            ChessGame.TeamColor color = (
-                    params[1].equalsIgnoreCase("white")) ?
-                    ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
-
-            int gameNumber = 0;
-            try {
-                gameNumber = Integer.parseInt(params[0]);
-            } catch (NumberFormatException ex) {
-                throw new ResponseException(ResponseException.Code.ClientError, "Game ID must be a number");
-            }
-
-            server.joinGame(color, gameNumber, authToken);
-            return "Joined game: " + params[0];
+        if (params.length != 2) {
+            throw new ResponseException(
+                    ResponseException.Code.ClientError,
+                    "Expected: <game number> <WHITE|BLACK>"
+            );
         }
-        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <gameID> <color>");
+
+        GameSummary game = gameFromListNumber(params[0]);
+        ChessGame.TeamColor color;
+
+        if (params[1].equalsIgnoreCase("white")) {
+            color = ChessGame.TeamColor.WHITE;
+        } else if (params[1].equalsIgnoreCase("black")) {
+            color = ChessGame.TeamColor.BLACK;
+        } else {
+            throw new ResponseException(
+                    ResponseException.Code.ClientError,
+                    "Team color must be WHITE or BLACK");
+        }
+
+        server.joinGame(color, game.gameID(), authToken);
+        return "Joined " + game.gameName() + " as " + color + ".\n";
     }
 }
