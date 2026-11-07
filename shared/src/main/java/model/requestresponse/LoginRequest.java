@@ -1,4 +1,4 @@
-package service.requestsponse;
+package model.requestresponse;
 
 public record LoginRequest(String username, String password) {
 }

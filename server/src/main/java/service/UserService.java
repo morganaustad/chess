@@ -9,7 +9,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import service.exception.AlreadyTakenException;
 import service.exception.BadRequestException;
 import service.exception.UnauthorizedException;
-import service.requestsponse.LoginRequest;
+import model.requestresponse.LoginRequest;
 
 import java.util.UUID;
 

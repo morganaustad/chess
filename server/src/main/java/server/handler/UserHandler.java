@@ -6,7 +6,7 @@ import io.javalin.http.Context;
 import model.AuthData;
 import model.UserData;
 import service.UserService;
-import service.requestsponse.LoginRequest;
+import model.requestresponse.LoginRequest;
 
 public class UserHandler {
     private final UserService userService;

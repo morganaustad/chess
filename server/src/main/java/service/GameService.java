@@ -4,11 +4,10 @@ import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import model.AuthData;
-import model.GameData;
+import model.*;
+import model.requestresponse.*;
 import service.exception.AlreadyTakenException;
 import service.exception.BadRequestException;
-import service.requestsponse.*;
 
 import java.util.ArrayList;
 import java.util.Collection;

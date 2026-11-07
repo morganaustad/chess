@@ -16,11 +16,11 @@ import org.junit.jupiter.api.Test;
 import service.exception.AlreadyTakenException;
 import service.exception.BadRequestException;
 import service.exception.UnauthorizedException;
-import service.requestsponse.CreateGameRequest;
-import service.requestsponse.GameSummary;
-import service.requestsponse.JoinGameRequest;
-import service.requestsponse.ListGamesResult;
-import service.requestsponse.LoginRequest;
+import model.requestresponse.CreateGameRequest;
+import model.requestresponse.GameSummary;
+import model.requestresponse.JoinGameRequest;
+import model.requestresponse.ListGamesResult;
+import model.requestresponse.LoginRequest;
 
 import java.util.Set;
 import java.util.stream.Collectors;

@@ -1,4 +1,4 @@
-package service.requestsponse;
+package model.requestresponse;
 
 import chess.ChessGame;
 

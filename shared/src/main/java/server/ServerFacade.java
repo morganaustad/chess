@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 
 import java.net.URI;
@@ -26,6 +27,14 @@ public class ServerFacade {
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
+
+    public AuthData login(UserData info) throws ResponseException {
+        var request = buildRequest("POST", "/session", info);
+        var response = sendRequest(request);
+        return handleResponse(response, AuthData.class);
+    }
+
+//    public  createGame()
 
     private HttpRequest buildRequest(String method, String path, Object body) {
         var request = HttpRequest.newBuilder()
