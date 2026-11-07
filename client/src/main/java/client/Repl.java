@@ -4,7 +4,6 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import exception.ResponseException;
 import model.requestresponse.GameSummary;
-import server.ServerFacade;
 import ui.BoardRenderer;
 
 import java.util.ArrayList;
