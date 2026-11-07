@@ -1,14 +1,18 @@
 package client;
 
+import exception.ResponseException;
+import server.ServerFacade;
+
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class Repl {
-    private final String serverUrl;
+    private final ServerFacade server;
+    private String authToken = null;
     private State state = State.SIGNEDOUT;
 
     public Repl(String serverUrl) {
-        this.serverUrl = serverUrl;
+        server = new ServerFacade(serverUrl);
     }
 
     public void run() {
@@ -23,8 +27,12 @@ public class Repl {
             try {
                 result = eval(line);
                 System.out.print(result);
+            } catch (Throwable ex) {
+                var message = ex.toString();
+                System.out.print(message);
             }
         }
+        System.out.println();
     }
 
     private String help() {
@@ -66,5 +74,14 @@ public class Repl {
         } catch (Exception ex) {
             return ex.getMessage();
         }
+    }
+
+    private String register(String... params) throws ResponseException {
+        if (params.length >= 3) {
+            server.register(params[0], params[1], params[2]);
+            state = State.SIGNEDIN;
+            return "Registered! You are now signed in as: " + params[0];
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <username> <password> <email>");
     }
 }
