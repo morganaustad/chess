@@ -112,6 +112,8 @@ public class Repl {
 
         server.logout(authToken);
         state = State.SIGNEDOUT;
+        authToken = null;
+        games = new ArrayList<>();
         return "You are now signed out.";
     }
 
@@ -119,7 +121,7 @@ public class Repl {
         verifyIsState(State.SIGNEDIN);
 
         if (params.length >= 1) {
-            CreateGameResult gameResult = server.createGame(params[0], authToken);
+            server.createGame(params[0], authToken);
             return "Game created: " + params[0];
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: <gameName>");
