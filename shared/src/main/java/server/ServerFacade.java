@@ -5,6 +5,8 @@ import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import model.requestresponse.CreateGameRequest;
+import model.requestresponse.CreateGameResult;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -34,7 +36,23 @@ public class ServerFacade {
         return handleResponse(response, AuthData.class);
     }
 
-//    public  createGame()
+    public CreateGameResult createGame(CreateGameRequest info) throws ResponseException {
+        var request = buildRequest("POST", "/game", info);
+        var response = sendRequest(request);
+        return handleResponse(response, CreateGameResult.class);
+    }
+
+    public void clear() throws ResponseException {
+        var request = buildRequest("DELETE", "/db", null);
+        var response = sendRequest(request);
+        handleResponse(response, null);
+    }
+
+    public void logout(AuthData info) throws ResponseException {
+        var request = buildRequest("DELETE", "/session", info);
+        var response = sendRequest(request);
+        handleResponse(response, null);
+    }
 
     private HttpRequest buildRequest(String method, String path, Object body) {
         var request = HttpRequest.newBuilder()
