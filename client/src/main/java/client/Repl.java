@@ -122,20 +122,23 @@ public class Repl {
         verifyIsState(State.SIGNEDIN);
 
         if (params.length >= 1) {
-            server.createGame(params[0], authToken);
-            return "Game created: " + params[0];
+            String gameName = String.join(" ", params);
+            server.createGame(gameName, authToken);
+            return "Game created: " + gameName;
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: <gameName>");
     }
 
     private String listGames() throws ResponseException {
+        verifyIsState(State.SIGNEDIN);
+
         games = new ArrayList<>(server.listGames(authToken).games());
         if (games.isEmpty()) {
             return "No games yet. Create one with: createGame <gameName>";
         }
 
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < games.toArray().length; i++) {
+        for (int i = 0; i < games.size(); i++) {
             GameSummary game = games.get(i);
             String white = game.whiteUsername() == null ? "<open>" : game.whiteUsername();
             String black = game.blackUsername() == null ? "<open>" : game.blackUsername();
@@ -226,7 +229,7 @@ public class Repl {
 
     private void verifyIsState(State state) throws ResponseException {
         if (!this.state.equals(state)) {
-            String stateMessage = (state.equals(State.SIGNEDIN)) ? "sign out" : "sign in";
+            String stateMessage = (state.equals(State.SIGNEDIN)) ? "sign in" : "sign out";
             throw new ResponseException(
                     ResponseException.Code.ClientError,
                     "You must " + stateMessage + " to run this command."

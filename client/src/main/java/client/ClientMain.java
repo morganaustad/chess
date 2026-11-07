@@ -1,8 +1,5 @@
 package client;
 
-import chess.*;
-import ui.BoardRenderer;
-
 public class ClientMain {
     public static void main(String[] args) {
         String serverURL = "http://localhost:8080";
