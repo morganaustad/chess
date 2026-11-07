@@ -86,6 +86,8 @@ public class Repl {
     }
 
     private String register(String... params) throws ResponseException {
+        verifyIsState(State.SIGNEDOUT);
+
         if (params.length >= 3) {
             authToken = server.register(params[0], params[1], params[2]).authToken();
             state = State.SIGNEDIN;
@@ -95,6 +97,8 @@ public class Repl {
     }
 
     private String login(String... params) throws ResponseException {
+        verifyIsState(State.SIGNEDOUT);
+
         if (params.length >= 2) {
             authToken = server.login(params[0], params[1]).authToken();
             state = State.SIGNEDIN;
@@ -104,12 +108,16 @@ public class Repl {
     }
 
     private String logout() throws ResponseException {
+        verifyIsState(State.SIGNEDIN);
+
         server.logout(authToken);
         state = State.SIGNEDOUT;
         return "You are now signed out.";
     }
 
     private String createGame(String... params) throws ResponseException {
+        verifyIsState(State.SIGNEDIN);
+
         if (params.length >= 1) {
             CreateGameResult gameResult = server.createGame(params[0], authToken);
             return "Game created: " + params[0];
@@ -124,13 +132,13 @@ public class Repl {
         }
 
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < games.toArray().length - 1; i++) {
+        for (int i = 0; i < games.toArray().length; i++) {
             GameSummary game = games.get(i);
             String white = game.whiteUsername() == null ? "<open>" : game.whiteUsername();
             String black = game.blackUsername() == null ? "<open>" : game.blackUsername();
             result.append(
                     String.format(
-                            "%d] %s White: %s Black: &s\n",
+                            "%d] %s White: %s Black: %s\n",
                             i + 1,
                             game.gameName(),
                             white,
@@ -168,6 +176,8 @@ public class Repl {
     }
 
     private String joinGame(String... params) throws ResponseException {
+        verifyIsState(State.SIGNEDIN);
+
         if (params.length != 2) {
             throw new ResponseException(
                     ResponseException.Code.ClientError,
@@ -194,13 +204,27 @@ public class Repl {
     }
 
     private String observeGame(String... params) throws ResponseException {
+        verifyIsState(State.SIGNEDIN);
+
         if (params.length != 1) {
             throw new ResponseException(
                     ResponseException.Code.ClientError,
                     "Expected: <game number>"
             );
         }
+
+        GameSummary game = gameFromListNumber(params[0]);
         // TODO: The whole game shindig here
         return " ";
+    }
+
+    private void verifyIsState(State state) throws ResponseException {
+        if (!this.state.equals(state)) {
+            String stateMessage = (state.equals(State.SIGNEDIN)) ? "sign out" : "sign in";
+            throw new ResponseException(
+                    ResponseException.Code.ClientError,
+                    "You must " + stateMessage + " to run this command."
+            );
+        }
     }
 }
