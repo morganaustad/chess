@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthData;
@@ -27,19 +28,22 @@ public class ServerFacade {
         serverUrl = "http://localhost:" + port;
     }
 
-    public AuthData register(UserData info) throws ResponseException {
+    public AuthData register(String username, String password, String email) throws ResponseException {
+        UserData info = new UserData(username, password, email);
         var request = buildRequest("POST", "/user", info, null);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
 
-    public AuthData login(LoginRequest info) throws ResponseException {
+    public AuthData login(String username, String password) throws ResponseException {
+        LoginRequest info = new LoginRequest(username, password);
         var request = buildRequest("POST", "/session", info, null);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
 
-    public CreateGameResult createGame(CreateGameRequest info, String authToken) throws ResponseException {
+    public CreateGameResult createGame(String gameName, String authToken) throws ResponseException {
+        CreateGameRequest info = new CreateGameRequest(gameName);
         var request = buildRequest("POST", "/game", info, authToken);
         var response = sendRequest(request);
         return handleResponse(response, CreateGameResult.class);
@@ -57,7 +61,8 @@ public class ServerFacade {
         handleResponse(response, null);
     }
 
-    public void joinGame(JoinGameRequest info, String authToken) throws ResponseException {
+    public void joinGame(ChessGame.TeamColor playerColor, int gameID, String authToken) throws ResponseException {
+        JoinGameRequest info = new JoinGameRequest(playerColor, gameID);
         var request = buildRequest("PUT", "/game", info, authToken);
         var response = sendRequest(request);
         handleResponse(response, null);
